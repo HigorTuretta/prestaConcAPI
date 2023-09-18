@@ -3,7 +3,9 @@ const AppError = require("../utils/AppError");
 
 class TripsController {
   async index(req, res) {
-    const trips = await knex("trips").select("*");
+    const trips = await knex("trips")
+    .join("tripData", "trips.id", "=", "tripData.trip_id")
+    .select("*");
     return res.status(200).json(trips);
   }
 

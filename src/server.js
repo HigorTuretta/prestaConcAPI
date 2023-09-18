@@ -3,6 +3,7 @@ const AppError = require('./utils/AppError')
 const express = require('express')
 const routes = require('./routes')
 const cors = require('cors');
+const database = require('./database/sqlite')
 
 const app = express()
 const PORT = 3333
@@ -10,6 +11,7 @@ const PORT = 3333
 app.use(express.json())
 app.use(cors())
 app.use(routes)
+database()
 
 //para tratamento de erros
 app.use((error, req , res, next)=>{
