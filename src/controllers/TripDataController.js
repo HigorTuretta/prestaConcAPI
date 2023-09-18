@@ -22,10 +22,9 @@ class TripDataController {
       const tripData = await knex("tripData")
         .select("*")
         .where({ trip_id: id })
-        .join("trips", "tripData.trip_id", "trips.id")
+        .innerJoin("trips", "tripData.trip_id",'=', "trips.id")
         .select("trips.city", "trips.UF");
-      const tripNotes = await knex("tripNotes").where({ trip_id: id });
-
+      const tripNotes = await knex("tripNotes").where({ trip_id: id });      
       return res.status(200).json({
         tripData,
         tripNotes,
