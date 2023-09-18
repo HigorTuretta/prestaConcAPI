@@ -3,7 +3,7 @@ const AppError = require("../utils/AppError");
 
 class TripsController {
   async index(req, res) {
-    const user_id = req.user.id    c
+    const user_id = req.user.id
     const trips = await knex("trips").where({user_id})
     .innerJoin("tripData", "trips.id", "=", "tripData.trip_id")
     .select("*");    
