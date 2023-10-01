@@ -10,7 +10,7 @@ class InvoiceController {
     return res.status(200).json(invoices);
   }
   async create(req, res) {
-    const { description, value } = req.body;
+    const { description, value, created_at } = req.body;
     const { id } = req.params;
     const user_id = req.user.id;
     try {
@@ -19,6 +19,7 @@ class InvoiceController {
         value,
         trip_id: id,
         user_id,
+        created_at
       });
       return res.status(200).json(invoice);
     } catch (error) {
