@@ -5,6 +5,7 @@ const tripsRoutes = require("./trips.routes");
 const sessionsRoutes = require("./sessions.routes");
 const tripdataRoutes = require("./tripData.routes");
 const invoicesRoutes = require("./invoices.routes");
+const passwordTokenRoutes = require("./passwordToken.routes");
 
 const routes = Router();
 
@@ -13,5 +14,6 @@ routes.use("/trips", tripsRoutes);
 routes.use("/sessions", sessionsRoutes);
 routes.use("/details", tripdataRoutes);
 routes.use("/invoices", invoicesRoutes);
+routes.use("/passwordRecovery", passwordTokenRoutes);
 
 module.exports = routes;

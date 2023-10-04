@@ -13,6 +13,7 @@ app.use(cors())
 app.use(routes)
 database()
 
+
 //para tratamento de erros
 app.use((error, req , res, next)=>{
     if (error instanceof AppError){
