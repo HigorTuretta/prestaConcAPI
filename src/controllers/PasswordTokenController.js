@@ -9,8 +9,6 @@ require("dotenv").config();
 class PasswordTokenController {
   async create(req, res) {
     const { email } = req.body;
-    console.log(process.env.EMAIL);
-    console.log(process.env.EMAIL_PASSWORD)
     // Configuração do Nodemailer
     const transporter = nodemailer.createTransport({
       service: "Gmail",
