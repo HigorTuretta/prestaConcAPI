@@ -78,8 +78,10 @@ class PasswordTokenController {
   }
 
   async update(req, res) {
-    const { email, token, newPassword } = req.body;
+    const { token, newPassword } = req.body;
+    const {email} = req.params;
 
+    
     // Verifique se o token é válido
     const tokenRecord = await knex("passwordToken")
       .where("email", email)

@@ -5,8 +5,8 @@ const PasswordTokenController = require('../controllers/PasswordTokenController'
 
 const passwordTokenController = new PasswordTokenController()
 
-passwordTokenRoutes.post('/recuperar-senha', passwordTokenController.create)
-passwordTokenRoutes.update('/atualizar-senha', passwordTokenController.update)
-passwordTokenController.get('/validar-token', passwordTokenRoutes.show)
+passwordTokenRoutes.post('/token', passwordTokenController.create)
+passwordTokenRoutes.update('/:email', passwordTokenController.update)
+passwordTokenController.get('/validar', passwordTokenRoutes.show)
 
 module.exports = passwordTokenRoutes
