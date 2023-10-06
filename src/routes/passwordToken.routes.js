@@ -7,6 +7,6 @@ const passwordTokenController = new PasswordTokenController()
 
 passwordTokenRoutes.post('/token', passwordTokenController.create)
 passwordTokenRoutes.put('/:email', passwordTokenController.update)
-passwordTokenController.get('/validar', passwordTokenRoutes.show)
+passwordTokenRoutes.post('/validar', passwordTokenController.show)
 
 module.exports = passwordTokenRoutes

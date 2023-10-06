@@ -2,14 +2,16 @@ const AppError = require("../utils/AppError");
 const knex = require("../database/knex");
 const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
-const {hash} = require("bcryptjs");
-const nodemailer = require('nodemailer');
+const { compare } = require("bcryptjs");
+const { hash } = require("bcryptjs");
+const nodemailer = require("nodemailer");
 require("dotenv").config();
 
 class PasswordTokenController {
   async create(req, res) {
     const { email } = req.body;
     // Configuração do Nodemailer
+
     const transporter = nodemailer.createTransport({
       service: "Gmail",
       auth: {
@@ -20,11 +22,10 @@ class PasswordTokenController {
 
     // Gere um token de redefinição de senha
     const token = crypto.randomBytes(20).toString("hex");
-    const hashedToken = await bcrypt.hash(token, 10);
 
     // Insira o token no banco de dados
     await knex("passwordToken").insert({
-      token: hashedToken,
+      token: token,
       email,
     });
 
@@ -48,16 +49,13 @@ class PasswordTokenController {
     });
   }
 
-  async show(req, res){
-    const { email, token, newPassword } = req.body;
-
+  async show(req, res) {
+    const { email, token } = req.body;
     // Verifique se o token é válido
-    const tokenRecord = await knex("passwordToken")
-      .where("email", email)
-      .orderBy("created_at", "desc")
-      .first();
+    const tokenRecord = await knex("passwordToken").where({ email }).first();
 
     if (!tokenRecord) {
+      console.log("parei aqui");
       throw new AppError("Token Inválido!", 401);
     }
 
@@ -67,25 +65,28 @@ class PasswordTokenController {
     const currentTime = new Date().getTime();
 
     if (currentTime - tokenCreationTime > tokenExpirationTime) {
-        throw new AppError("Token expirado!", 401);
+      console.log("parei aqui");
+      throw new AppError("Token expirado!", 401);
     }
 
-    const isTokenValid = await bcrypt.compare(token, tokenRecord.token);
+    const isTokenValid = tokenRecord.token == token ? true : false;
 
     if (isTokenValid) {
       return res.status(200).json(`Token válido.`);
+    } else {
+      console.log(tokenRecord.token);
+      console.log(token);
+      throw new AppError("Token inválido!", 401);
     }
   }
 
   async update(req, res) {
     const { token, newPassword } = req.body;
-    const {email} = req.params;
+    const { email } = req.params;
 
-    
     // Verifique se o token é válido
     const tokenRecord = await knex("passwordToken")
       .where("email", email)
-      .orderBy("created_at", "desc")
       .first();
 
     if (!tokenRecord) {
@@ -98,10 +99,10 @@ class PasswordTokenController {
     const currentTime = new Date().getTime();
 
     if (currentTime - tokenCreationTime > tokenExpirationTime) {
-        throw new AppError("Token expirado!", 401);
+      throw new AppError("Token expirado!", 401);
     }
 
-    const isTokenValid = await bcrypt.compare(token, tokenRecord.token);
+    const isTokenValid = tokenRecord.token == token ? true : false;
 
     if (isTokenValid) {
       const hashedPassword = await hash(newPassword, 8);
@@ -112,6 +113,7 @@ class PasswordTokenController {
 
       // Limpe o token após a redefinição de senha
       await knex("passwordToken").where("id", tokenRecord.id).del();
+      
       return res.status(200).json(`Senha atualizada com sucesso.`);
     } else {
       throw new AppError("Token Inválido e/ou expirado!", 401);
