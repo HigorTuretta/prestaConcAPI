@@ -6,7 +6,7 @@ const PasswordTokenController = require('../controllers/PasswordTokenController'
 const passwordTokenController = new PasswordTokenController()
 
 passwordTokenRoutes.post('/token', passwordTokenController.create)
-passwordTokenRoutes.update('/:email', passwordTokenController.update)
+passwordTokenRoutes.put('/:email', passwordTokenController.update)
 passwordTokenController.get('/validar', passwordTokenRoutes.show)
 
 module.exports = passwordTokenRoutes
