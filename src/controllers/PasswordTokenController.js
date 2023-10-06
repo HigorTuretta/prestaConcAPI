@@ -48,6 +48,35 @@ class PasswordTokenController {
     });
   }
 
+  async show(req, res){
+    const { email, token, newPassword } = req.body;
+
+    // Verifique se o token é válido
+    const tokenRecord = await knex("passwordToken")
+      .where("email", email)
+      .orderBy("created_at", "desc")
+      .first();
+
+    if (!tokenRecord) {
+      throw new AppError("Token Inválido!", 401);
+    }
+
+    // Verifique se o token não expirou (por exemplo, expira em 1 hora)
+    const tokenExpirationTime = 60 * 60 * 1000; // 1 hora em milissegundos
+    const tokenCreationTime = new Date(tokenRecord.created_at).getTime();
+    const currentTime = new Date().getTime();
+
+    if (currentTime - tokenCreationTime > tokenExpirationTime) {
+        throw new AppError("Token expirado!", 401);
+    }
+
+    const isTokenValid = await bcrypt.compare(token, tokenRecord.token);
+
+    if (isTokenValid) {
+      return res.status(200).json(`Token válido.`);
+    }
+  }
+
   async update(req, res) {
     const { email, token, newPassword } = req.body;
 
