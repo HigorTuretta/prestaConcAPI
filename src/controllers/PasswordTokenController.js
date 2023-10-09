@@ -65,7 +65,9 @@ class PasswordTokenController {
     const currentTime = new Date().getTime();
 
     if (currentTime - tokenCreationTime > tokenExpirationTime) {
+      await knex("passwordToken").where("id", tokenRecord.id).del();
       throw new AppError("Token expirado!", 401);
+
     }
 
     const isTokenValid = tokenRecord.token == token ? true : false;
@@ -96,6 +98,8 @@ class PasswordTokenController {
     const currentTime = new Date().getTime();
 
     if (currentTime - tokenCreationTime > tokenExpirationTime) {
+       // Limpe o token
+      await knex("passwordToken").where("id", tokenRecord.id).del();
       throw new AppError("Token expirado!", 401);
     }
 
@@ -113,6 +117,7 @@ class PasswordTokenController {
       
       return res.status(200).json(`Senha atualizada com sucesso.`);
     } else {
+      await knex("passwordToken").where("id", tokenRecord.id).del();
       throw new AppError("Token Inválido e/ou expirado!", 401);
     }
   }
