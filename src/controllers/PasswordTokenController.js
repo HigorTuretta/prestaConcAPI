@@ -9,7 +9,7 @@ require("dotenv").config();
 
 class PasswordTokenController {
   async create(req, res) {
-    const { email } = req.body;
+    const { email, created_at } = req.body;
     // Configuração do Nodemailer
 
     const transporter = nodemailer.createTransport({
@@ -27,6 +27,7 @@ class PasswordTokenController {
     await knex("passwordToken").insert({
       token: token,
       email,
+      created_at
     });
 
     // Envie um email com o token de redefinição de senha
@@ -55,7 +56,6 @@ class PasswordTokenController {
     const tokenRecord = await knex("passwordToken").where({ email }).first();
 
     if (!tokenRecord) {
-      console.log("parei aqui");
       throw new AppError("Token Inválido!", 401);
     }
 
@@ -65,7 +65,6 @@ class PasswordTokenController {
     const currentTime = new Date().getTime();
 
     if (currentTime - tokenCreationTime > tokenExpirationTime) {
-      console.log("parei aqui");
       throw new AppError("Token expirado!", 401);
     }
 
@@ -74,8 +73,6 @@ class PasswordTokenController {
     if (isTokenValid) {
       return res.status(200).json(`Token válido.`);
     } else {
-      console.log(tokenRecord.token);
-      console.log(token);
       throw new AppError("Token inválido!", 401);
     }
   }
