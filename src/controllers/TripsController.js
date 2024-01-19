@@ -7,7 +7,7 @@ class TripsController {
     const trips = await knex("trips").where({user_id})
     .innerJoin("tripData", "trips.id", "=", "tripData.trip_id")
     .select("*")
-    .orderBy("created_at", "desc");    
+    .orderBy("trips.created_at", "desc");    
     return res.status(200).json(trips);
   }
 
